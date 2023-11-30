@@ -489,13 +489,6 @@ import (
 
 var ErrAssetPidNotFound = errors.New("error asset pid not found")
 
-type Ticker struct {
-	Bid       float64
-	Ask       float64
-	Timestamp time.Time
-	Asset     string
-}
-
 type InvestingOption func(*investinProvider)
 
 type investinProvider struct {
@@ -696,15 +689,22 @@ func (w *Websocket) Start(ctx context.Context, currency ...string) (<-chan model
 					goto Retry
 				}
 
-				ticker := &AggTradeEvent{}
+				ticker := &TickerEvent{}
 				if err := json.Unmarshal(message, ticker); err != nil {
 					continue
 				}
 
 				w.priceStream <- models.MarketData{
-					Ask:       ticker.Price,
-					Symbol:    ticker.Symbol,
-					Timestamp: ticker.EventTime,
+					Ask:            ticker.BestAskPrice,
+					BaseVolume24h:  ticker.TotalTradedBaseVolume,
+					Bid:            ticker.BestBidPrice,
+					High24h:        ticker.HighPrice,
+					LastPrice:      ticker.LastPrice,
+					Low24h:         ticker.LowPrice,
+					Open24h:        ticker.OpenPrice,
+					QuoteVolume24h: ticker.TotalTradedQuoteVolume,
+					Symbol:         ticker.Symbol,
+					Timestamp:      ticker.EventTime,
 				}
 
 				// output := message[3 : len(message)-2]
@@ -767,7 +767,7 @@ func prepareSubscriberPayload(currency ...string) ([]byte, error) {
 	payload := []string{}
 
 	for _, c := range currency {
-		payload = append(payload, fmt.Sprintf("%s@aggTrade", c))
+		payload = append(payload, fmt.Sprintf("%s@ticker", c))
 	}
 
 	return json.Marshal(subscribePayload{
@@ -776,16 +776,28 @@ func prepareSubscriberPayload(currency ...string) ([]byte, error) {
 	})
 }
 
-type AggTradeEvent struct {
-	E            string          `json:"e"`
-	EventTime    int64           `json:"E"`
-	Symbol       string          `json:"s"`
-	TradeID      int             `json:"a"`
-	Price        decimal.Decimal `json:"p"`
-	Quantity     string          `json:"q"`
-	FirstID      int             `json:"f"`
-	LastID       int             `json:"l"`
-	TradeTime    int64           `json:"T"`
-	IsBuyerMaker bool            `json:"m"`
-	Ignore       bool            `json:"M"`
+type TickerEvent struct {
+	EventTime              int64           `json:"E"`
+	Event                  string          `json:"e"`
+	Symbol                 string          `json:"s"`
+	PriceChange            string          `json:"p"`
+	PriceChangePercent     string          `json:"P"`
+	WeightedAveragePrice   string          `json:"w"`
+	FirstTradePrice        string          `json:"x"`
+	LastPrice              decimal.Decimal `json:"c"`
+	LastQuantity           string          `json:"Q"`
+	BestBidPrice           decimal.Decimal `json:"b"`
+	BestBidQuantity        string          `json:"B"`
+	BestAskPrice           decimal.Decimal `json:"a"`
+	BestAskQuantity        string          `json:"A"`
+	OpenPrice              decimal.Decimal `json:"o"`
+	HighPrice              decimal.Decimal `json:"h"`
+	LowPrice               decimal.Decimal `json:"l"`
+	TotalTradedBaseVolume  decimal.Decimal `json:"v"`
+	TotalTradedQuoteVolume decimal.Decimal `json:"q"`
+	StatisticsOpenTime     int64           `json:"O"`
+	StatisticsCloseTime    int64           `json:"C"`
+	FirstTradeID           int64           `json:"F"`
+	LastTradeID            int64           `json:"L"`
+	TotalNumberTrades      int64           `json:"n"`
 }

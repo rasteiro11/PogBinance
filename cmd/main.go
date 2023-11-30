@@ -13,7 +13,7 @@ func main() {
 
 	binanceWs := binanceProvider.NewMarketDataProvider()
 
-	c, err := binanceWs.Start(ctx, "btcusdt")
+	c, err := binanceWs.Start(ctx, "usdtbrl")
 	if err != nil {
 		logger.Of(ctx).Fatalf("[main] binanceWs.Start() returned error: %+v\n", err)
 	}
