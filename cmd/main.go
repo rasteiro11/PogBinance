@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	binanceProvider "pogbinance/pkg/marketdata/binance"
 
 	"github.com/rasteiro11/PogCore/pkg/logger"
@@ -13,13 +12,13 @@ func main() {
 
 	binanceWs := binanceProvider.NewMarketDataProvider()
 
-	c, err := binanceWs.Start(ctx, "usdtbrl")
+	c, err := binanceWs.Start(ctx, "trxusdt")
 	if err != nil {
 		logger.Of(ctx).Fatalf("[main] binanceWs.Start() returned error: %+v\n", err)
 	}
 
 	for md := range c {
-		log.Printf("RECEIVED MARKET DATA: %+v\n", md)
+		logger.Of(ctx).Debugf("MARKET DATA: %+v\n", md)
 	}
 
 	for {
