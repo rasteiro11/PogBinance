@@ -2,7 +2,8 @@ package marketdata
 
 import (
 	"context"
-	"pogbinance/models"
+
+	"github.com/rasteiro11/PogBinance/models"
 )
 
 type MarketDataProvider interface {

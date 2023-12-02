@@ -477,12 +477,12 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
-	"pogbinance/models"
-	"pogbinance/pkg/marketdata"
 	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/rasteiro11/PogBinance/models"
+	"github.com/rasteiro11/PogBinance/pkg/marketdata"
 	"github.com/rasteiro11/PogCore/pkg/logger"
 	"github.com/shopspring/decimal"
 )

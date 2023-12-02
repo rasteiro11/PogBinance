@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	binanceProvider "pogbinance/pkg/marketdata/binance"
+	binanceProvider "github.com/rasteiro11/PogBinance/pkg/marketdata/binance"
 
 	"github.com/rasteiro11/PogCore/pkg/logger"
 )
@@ -12,7 +12,7 @@ func main() {
 
 	binanceWs := binanceProvider.NewMarketDataProvider()
 
-	c, err := binanceWs.Start(ctx, "trxusdt")
+	c, err := binanceWs.Start(ctx, "maticusdt", "dotusdt", "solusdt", "avaxusdt")
 	if err != nil {
 		logger.Of(ctx).Fatalf("[main] binanceWs.Start() returned error: %+v\n", err)
 	}
